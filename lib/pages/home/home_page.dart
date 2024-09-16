@@ -17,12 +17,14 @@ class _HomePageState extends State<HomePage> {
   late Future<Result> popular;
   late Future<Result> nowPlaying;
   late Future<Result> upcomingFuture;
+  late Future<Result> favoriteMovies;
 
   @override
   void initState() {
     popular = apiServices.getPopularMovies();
     nowPlaying = apiServices.getNowPlayingMovies();
     upcomingFuture = apiServices.getUpcomingMovies();
+    favoriteMovies = apiServices.getFavoriteMovies();
     super.initState();
   }
 
@@ -106,6 +108,27 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(
                 height: 20,
+              ),
+
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                child: Text(
+                  'Favorites',
+                  style: TextStyle(
+                    color: Colors.white54,
+                    fontWeight: FontWeight.w300,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+              FutureBuilder<Result>(
+                future: favoriteMovies,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return MoviesHorizontalList(result: snapshot.data!);
+                  }
+                  return const SizedBox();
+                },
               ),
             ],
           ),

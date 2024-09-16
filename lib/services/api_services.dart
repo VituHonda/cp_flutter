@@ -8,20 +8,10 @@ import 'package:cp_flutter/models/movie_model.dart';
 const baseUrl = 'https://api.themoviedb.org/3/';
 const key = '?api_key=$apiKey';
 
-class ApiServices {
-  Future<Result> getTopRatedMovies() async {
-    var endPoint = 'movie/top_rated';
-    final url = '$baseUrl$endPoint$key';
 
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      return Result.fromJson(jsonDecode(response.body));
-    }
-    throw Exception('failed to load now playing movies');
-  }
+class ApiServices {
 
   // HOME
-
   Future<Result> getPopularMovies() async {
     const endPoint = 'movie/popular';
     const url = '$baseUrl$endPoint$key';
@@ -55,7 +45,48 @@ class ApiServices {
     throw Exception('failed to load upcoming movies');
   }
 
-  //
+  Future<Result> getFavoriteMovies() async {
+    var endPoint = 'account/21512588/favorite/movies?language=en-US&page=1&sort_by=created_at.asc';
+    final url = '$baseUrl$endPoint$key';
+
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      return Result.fromJson(jsonDecode(response.body));
+    }
+    throw Exception('failed to load upcoming movies');
+  }
+
+  // SEARCH
+
+  Future<Result> getSearchedMovie(String searchText) async {
+    final endPoint = 'search/movie?query=$searchText';
+    final url = '$baseUrl$endPoint';
+    final response = await http.get(Uri.parse(url), headers: {
+      'Authorization':
+          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3NTAyYjhjMDMxYzc5NzkwZmU1YzBiNGY5NGZkNzcwZCIsInN1YiI6IjYzMmMxYjAyYmE0ODAyMDA4MTcyNjM5NSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.N1SoB26LWgsA33c-5X0DT5haVOD4CfWfRhwpDu9eGkc'
+    });
+    if (response.statusCode == 200) {
+      final movies = Result.fromJson(jsonDecode(response.body));
+      return movies;
+    }
+    throw Exception('failed to load  search movie ');
+  }
+
+  // TOP RATED
+
+  
+  Future<Result> getTopRatedMovies() async {
+    var endPoint = 'movie/top_rated';
+    final url = '$baseUrl$endPoint$key';
+
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      return Result.fromJson(jsonDecode(response.body));
+    }
+    throw Exception('failed to load now playing movies');
+  }
+
+  // Details
 
   Future<MovieDetailModel> getMovieDetail(int movieId) async {
     final endPoint = 'movie/$movieId';
@@ -77,19 +108,5 @@ class ApiServices {
       return Result.fromJson(jsonDecode(response.body));
     }
     throw Exception('failed to load  movie details');
-  }
-
-  Future<Result> getSearchedMovie(String searchText) async {
-    final endPoint = 'search/movie?query=$searchText';
-    final url = '$baseUrl$endPoint';
-    final response = await http.get(Uri.parse(url), headers: {
-      'Authorization':
-          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3NTAyYjhjMDMxYzc5NzkwZmU1YzBiNGY5NGZkNzcwZCIsInN1YiI6IjYzMmMxYjAyYmE0ODAyMDA4MTcyNjM5NSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.N1SoB26LWgsA33c-5X0DT5haVOD4CfWfRhwpDu9eGkc'
-    });
-    if (response.statusCode == 200) {
-      final movies = Result.fromJson(jsonDecode(response.body));
-      return movies;
-    }
-    throw Exception('failed to load  search movie ');
   }
 }
