@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:cp_flutter/common/utils.dart';
 import 'package:cp_flutter/models/movie_model.dart';
 import 'package:cp_flutter/pages/movie_detail/movie_detail_page.dart';
@@ -24,7 +23,6 @@ class MovieSearch extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
         child: Row(
           children: [
-            // Adicione widgets aqui para exibir a imagem e detalhes do filme
             Image.network(
               '$imageUrl${movie.posterPath}',
               width: 100,

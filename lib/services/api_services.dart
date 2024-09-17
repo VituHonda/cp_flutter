@@ -94,6 +94,53 @@ class ApiServices {
     }
   }
 
+  // SEARCH BY GENRE
+
+  Future<List<Map<String, dynamic>>> getMovieGenres() async {
+    var endPoint = "https://api.themoviedb.org/3/genre/movie/list?language=en";
+
+    final response = await http.get(
+      Uri.parse(endPoint),
+      headers: {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Authorization": "Bearer seu_token_de_autorizacao"
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      List<Map<String, dynamic>> genres = (data['genres'] as List)
+          .map((genre) => {
+                'id': genre['id'],
+                'name': genre['name'],
+              })
+          .toList();
+      return genres;
+    } else {
+      throw Exception('Failed to load movie genres');
+    }
+  }
+
+  Future<Result> getMoviesByGenre(int genreId) async {
+
+
+    var endPoint = "https://api.themoviedb.org/3/discover/movie?with_genres=$genreId";
+
+    final response = await http.get(
+      Uri.parse(endPoint),
+      headers: {
+        "Content-Type": "application/json;charset=UTF-8",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwNmFiYWZhNGY2MzAwMGU1NmZiNGUzYmY0YmIzZWViZiIsIm5iZiI6MTcyNjUyMjk1OC4zNjkzMTcsInN1YiI6IjY2ZTBjOTJlZjA0MGU4MzY4OTM1YTI1MiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.BrD5ckSHiZMQu5yu9kp8DdNvSlPK1Ua8QapWW9cZYn8"
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return Result.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load movies by genre');
+    }
+  }
+
   // SEARCH
 
   Future<Result> getSearchedMovie(String searchText) async {
