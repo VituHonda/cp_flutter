@@ -18,16 +18,59 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
 
   late Future<MovieDetailModel> movieDetail;
   late Future<Result> movieRecommendationModel;
+  late Future<Result> favoriteMovies;
+
+  bool isLiked = false;
 
   @override
   void initState() {
     fetchInitialData();
+    favoriteMovies = apiServices.getFavoriteMovies();
+    checkIfFavorite();
     super.initState();
   }
 
   fetchInitialData() {
     movieDetail = apiServices.getMovieDetail(widget.movieId);
     movieRecommendationModel = apiServices.getMovieRecommendations(widget.movieId);
+  }
+
+  Future<void> checkIfFavorite() async {
+    try {
+      Result favoriteMoviesResult = await favoriteMovies;
+      
+      bool exists = favoriteMoviesResult.movies.any((movie) => movie.id == widget.movieId);
+
+      setState(() {
+        isLiked = exists;
+      });
+    } catch (e) {
+      print('Erro ao verificar favoritos: $e');
+    }
+  }
+
+  Future<void> toggleLike() async {
+
+     try {
+    final response = await apiServices.postFavoriteStatus(
+      widget.movieId,
+      !isLiked 
+    );
+
+    if (response.success) {
+      setState(() {
+        isLiked = !isLiked;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update favorite status')),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: $e')),
+    );
+  }
   }
 
   @override
@@ -75,12 +118,25 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          movie.title,
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                movie.title,
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                isLiked ? Icons.favorite : Icons.favorite_border,
+                                color: isLiked ? Colors.red : Colors.grey,
+                              ),
+                              onPressed: toggleLike,
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 15),
                         Row(

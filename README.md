@@ -6,7 +6,7 @@
 
 ### Funcionalidade 1 ~ poder favoritar, ver lista de favorito na home
 
-- Add and Remove Favorite: https://developer.themoviedb.org/reference/account-add-favorite
+- Add and Remove Favorite: https://developer.themoviedb.org/reference/account-add-favorite ~ OK
 
 - Get Favorite List: https://developer.themoviedb.org/reference/account-get-favorites ~ OK
 
