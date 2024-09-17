@@ -15,41 +15,36 @@ class _SearchPageState extends State<SearchPage> {
   ApiServices apiServices = ApiServices();
   TextEditingController searchController = TextEditingController();
   late Future<Result> result;
-  late Future<List<Map<String, dynamic>>> genreFuture; // Lista com ID e nome
+  late Future<List<Map<String, dynamic>>> genreFuture;
   late String selectedType;
-  int? selectedGenreId; // Variável para armazenar o ID do gênero selecionado
+  int? selectedGenreId;
 
   @override
   void initState() {
     result =
-        apiServices.getPopularMovies(); // Busca inicial de filmes populares
+        apiServices.getPopularMovies();
     genreFuture =
-        apiServices.getMovieGenres(); // Inicializa a busca dos gêneros
+        apiServices.getMovieGenres();
     super.initState();
   }
 
-  // Função para buscar filmes pelo termo inserido
   void search(String query) {
     setState(() {
       if (query.isEmpty) {
-        // Se a busca estiver vazia, exibe os filmes populares
         result = apiServices.getPopularMovies();
       } else if (query.length > 4) {
-        // Se a busca tiver mais de 4 caracteres, realiza a busca do termo
         result = apiServices.getSearchedMovie(query);
       }
     });
   }
 
-  // Função chamada ao selecionar um gênero, carrega os filmes daquele gênero
   void searchByGenre(int genreId) {
     setState(() {
       result = apiServices
-          .getMoviesByGenre(genreId); // Chama a função passando o ID do gênero
+          .getMoviesByGenre(genreId);
     });
   }
 
-  // Função para exibir o diálogo de seleção de gênero
   void showTypesDialog(List<Map<String, dynamic>> genres) {
     showDialog(
       context: context,
@@ -66,17 +61,17 @@ class _SearchPageState extends State<SearchPage> {
                 itemBuilder: (context, index) {
                   return ListTile(
                     title:
-                        Text(genres[index]['name']), // Exibe o nome do gênero
+                        Text(genres[index]['name']),
                     onTap: () {
-                      int genreId = genres[index]['id']; // Pega o ID do gênero
+                      int genreId = genres[index]['id']; 
                       setState(() {
                         selectedType = genres[index]
-                            ['name']; // Atualiza o tipo selecionado
-                        selectedGenreId = genreId; // Armazena o ID do gênero
+                            ['name'];
+                        selectedGenreId = genreId;
                         searchByGenre(
-                            genreId); // Busca filmes com base no gênero selecionado
+                            genreId);
                       });
-                      Navigator.of(context).pop(); // Fecha o diálogo
+                      Navigator.of(context).pop();
                     },
                   );
                 },
@@ -124,7 +119,7 @@ class _SearchPageState extends State<SearchPage> {
                   style: const TextStyle(color: Colors.white),
                   backgroundColor: Colors.grey.withOpacity(0.3),
                   onChanged: (value) {
-                    search(searchController.text); // Chama a função de busca
+                    search(searchController.text);
                   },
                 ),
               ),
@@ -143,7 +138,7 @@ class _SearchPageState extends State<SearchPage> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        // Exibe a lista de gêneros no diálogo
+
                         genreFuture.then((genres) {
                           showTypesDialog(genres);
                         });
@@ -154,7 +149,6 @@ class _SearchPageState extends State<SearchPage> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Exibe a lista de filmes com base no Future result
               FutureBuilder<Result>(
                 future: result,
                 builder: (context, snapshot) {
